@@ -69,5 +69,46 @@ namespace RobotServer.Services
 
         }
         #endregion
+
+        #region Getting Robot By Id
+        public override async Task<RobotModel> GetRobotById(RobotLookUpRequest request, ServerCallContext context)
+        {
+
+            RobotModel robotModel = new();
+
+            try
+            {
+                var existingRobot = robotList.Find(robot => robot.Id == Guid.Parse(request.Id));
+                
+                // If there is no robot with given Id
+                if (existingRobot == null)
+                {
+                    robotModel.Error = new Reply
+                    {
+                        Result = "No record Found",
+                        IsOk = false
+                    };
+                    return await Task.FromResult(robotModel);
+                }
+
+                // Parsing GUID to string
+                robotModel.Id = existingRobot?.Id.ToString();
+                robotModel.Name = existingRobot?.Name;
+                robotModel.Description = existingRobot?.Description;
+
+                return await Task.FromResult(robotModel);
+            }
+            catch (Exception)
+            {
+                robotModel.Error = new Reply
+                {
+                    Result = "No record Found",
+                    IsOk = false
+                };
+                return await Task.FromResult(robotModel);
+            }
+
+        }
+        #endregion
     }
 }
