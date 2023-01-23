@@ -110,5 +110,52 @@ namespace RobotServer.Services
 
         }
         #endregion
+
+        #region Getting All Robots
+        public override async Task<RobotList> GetRobotList(Empty request, ServerCallContext context)
+        {
+            RobotList protoRobotList = new();
+            try
+            {
+                List<RobotModel> robotModelList = new();
+
+                // If there is data to return
+                if (robotList != null && robotList.Count != 0)
+                {
+                    foreach (Robot robot in robotList)
+                    {
+                        RobotModel robotModel = new()
+                        {
+                            Id = robot.Id.ToString(),
+                            Name = robot.Name,
+                            Description = robot.Description
+                        };
+                        robotModelList.Add(robotModel);
+                    }
+                    protoRobotList.Items.AddRange(robotModelList);
+                }
+                else
+                {
+                    protoRobotList.Error = new Reply
+                    {
+                        Result = "No Record Found",
+                        IsOk = false
+                    };
+                    return await Task.FromResult(protoRobotList);
+                }
+            }
+            catch (Exception ex)
+            {
+                protoRobotList.Error = new Reply
+                {
+                    Result = ex.Message,
+                    IsOk = false
+                };
+
+                return await Task.FromResult(protoRobotList);
+            }
+            return await Task.FromResult(protoRobotList);
+        }
+        #endregion
     }
 }
