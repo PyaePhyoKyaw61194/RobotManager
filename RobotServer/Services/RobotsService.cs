@@ -157,5 +157,66 @@ namespace RobotServer.Services
             return await Task.FromResult(protoRobotList);
         }
         #endregion
+
+        #region Updating Robot Info
+        public override async Task<Reply> UpdateRobot(RobotUpdateRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var existingRobot = robotList.Find(robot => robot.Id == Guid.Parse(request.Id));
+                if (existingRobot == null)
+                {
+                    return await Task.FromResult(new Reply()
+                    {
+                        Result = $"I cannot find {request.Name} in Robot List",
+                        IsOk = false
+                    });
+                }
+
+
+                if (request.Name.Length == 0)
+                {
+                    return await Task.FromResult(new Reply
+                    {
+                        Result = "Name should be Filled",
+                        IsOk = false
+                    });
+                }
+
+                // Checking robot with same name is already existed in DB
+                var duplicateUserIndex = robotList.FindIndex(robot => robot.Name == request.Name && robot.Id != Guid.Parse(request.Id));
+                if (duplicateUserIndex != -1)
+                {
+                    return await Task.FromResult(new Reply
+                    {
+                        Result = "Duplicate Record Existed",
+                        IsOk = false
+                    });
+                }
+
+                existingRobot.Id = Guid.Parse(request.Id);
+                existingRobot.Name = request.Name;
+                existingRobot.Description = request.Description;
+
+                // Updating the Data
+                var _index = robotList.FindIndex(robot => robot.Id == Guid.Parse(request.Id));
+                robotList[_index] = existingRobot;
+
+                return await Task.FromResult(new Reply
+                {
+                    Result = $"{request.Name} : the robot is updated",
+                    IsOk = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return await Task.FromResult(new Reply
+                {
+                    Result = $"Internal Error. {ex}.",
+                    IsOk = false
+                });
+            }
+        }
+        #endregion
     }
 }
