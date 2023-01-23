@@ -218,5 +218,38 @@ namespace RobotServer.Services
             }
         }
         #endregion
+
+        #region Deleting Robot Info
+        public override async Task<Reply> DeleteRobot(RobotLookUpRequest request, ServerCallContext context)
+        {
+            try
+            {
+                var existingRobotIndex = robotList.FindIndex(robot => robot.Id == Guid.Parse(request.Id));
+                if (existingRobotIndex == -1)
+                {
+                    return await Task.FromResult(new Reply()
+                    {
+                        Result = "No record Found to delete",
+                        IsOk = false
+                    });
+                }
+                robotList.RemoveAt(existingRobotIndex);
+
+                return await Task.FromResult(new Reply
+                {
+                    Result = "Your Robot Record is deleted",
+                    IsOk = true
+                });
+            }
+            catch (Exception ex)
+            {
+                return await Task.FromResult(new Reply
+                {
+                    Result = $"Internal Error. {ex}.",
+                    IsOk = false
+                });
+            }
+        }
+        #endregion
     }
 }
