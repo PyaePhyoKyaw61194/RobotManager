@@ -112,11 +112,11 @@ namespace RobotServer.Services
 
                 return await Task.FromResult(robotModel);
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 robotModel.Error = new Reply
                 {
-                    Result = "No record Found",
+                    Result = ex.Message,
                     IsOk = false
                 };
                 return await Task.FromResult(robotModel);

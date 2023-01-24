@@ -8,6 +8,6 @@ namespace RobotServer.Entities
         {
         }
 
-        public DbSet<Robot> RobotItems { get; set; }
+        public virtual DbSet<Robot> RobotItems { get; set; }
     }
 }
