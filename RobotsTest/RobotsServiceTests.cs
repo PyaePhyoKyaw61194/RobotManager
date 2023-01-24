@@ -1,7 +1,5 @@
 ﻿using EntityFrameworkCoreMock;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using Moq;
 using RobotServer;
 using RobotServer.Entities;
 using RobotServer.Services;
@@ -232,7 +230,7 @@ namespace RobotsTest
             //arrange
             DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
-          
+
 
             //act
             RobotLookUpRequest req = new RobotLookUpRequest()
@@ -257,15 +255,15 @@ namespace RobotsTest
 
             //act
             RobotCreateRequest req = new RobotCreateRequest()
-            { 
+            {
                 Name = toBeAdded.Name,
                 Description = toBeAdded.Description
             };
-            var result = await robotsService.CreateRobot(req,TestServerCallContext.Create());
-           
+            var result = await robotsService.CreateRobot(req, TestServerCallContext.Create());
+
 
             //assert
-            Assert.Equal(toBeAdded.Name, dbContextMock.Object.RobotItems.First(item=> item.Name == toBeAdded.Name).Name);
+            Assert.Equal(toBeAdded.Name, dbContextMock.Object.RobotItems.First(item => item.Name == toBeAdded.Name).Name);
             Assert.True(result.IsOk);
         }
 
