@@ -1,5 +1,7 @@
-﻿using RobotServer.Repo;
+﻿using RobotServer.Entities;
+
 using RobotServer.Services;
+using Microsoft.EntityFrameworkCore;
 
 namespace RobotServer
 {
@@ -8,7 +10,9 @@ namespace RobotServer
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddGrpc(o => o.EnableDetailedErrors = true);
-            services.AddSingleton<IRobotRepo, RobotRepo>();
+         
+            services.AddDbContext<RobotContext>(opt =>
+               opt.UseInMemoryDatabase("RobotList"));
         }
 
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)

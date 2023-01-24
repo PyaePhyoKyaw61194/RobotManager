@@ -1,17 +1,26 @@
 ﻿using Grpc.Core;
+using Microsoft.EntityFrameworkCore;
 using RobotServer.Entities;
-using RobotServer.Repo;
+
 
 namespace RobotServer.Services
 {
     public class RobotsService : Robots.RobotsBase
     {
+        private RobotContext _context;
+        //private IRobotRepo _robotRepo;
 
-        private IRobotRepo _robotRepo;
-
-        public RobotsService(IRobotRepo robotRepo)
+        public RobotsService(RobotContext context)
         {
-            _robotRepo = robotRepo;
+            //_robotRepo = robotRepo;
+            _context = context;
+            //if (_context.RobotItems.Count() == 0)
+            //{
+            //    // Create a new TodoItem if collection is empty,
+            //    // which means you can't delete all TodoItems.
+            //    _context.RobotItems.Add(new Robot { Name = "Item1" });
+            //    _context.SaveChanges();
+            //}
         }
 
         #region Robot Creation
@@ -30,10 +39,12 @@ namespace RobotServer.Services
                 }
 
                 // Robot with same name is not allowed to create 
-                var duplicateUserIndex = _robotRepo.GetRobotIndexByName(request.Name);
+                //var duplicateUserIndex = _robotRepo.GetRobotIndexByName(request.Name);
+                var duplicateUser = await _context.RobotItems.FirstOrDefaultAsync(item => item.Name == request.Name);
+
 
                 // If duplicate data exists, terminate
-                if (duplicateUserIndex != -1)
+                if (duplicateUser != null)
                 {
                     return await Task.FromResult(new Reply
                     {
@@ -50,7 +61,9 @@ namespace RobotServer.Services
                 };
 
                 // Adding to the DB: currently not a persistence DB
-                _robotRepo.CreateRobot(_robot);
+                //_robotRepo.CreateRobot(_robot);
+                _context.RobotItems.Add(_robot);
+                await _context.SaveChangesAsync();
 
                 // Return the successful response
                 return await Task.FromResult(new Reply
@@ -79,8 +92,8 @@ namespace RobotServer.Services
 
             try
             {
-                var existingRobot = _robotRepo.GetRobot(request.Id);
-
+                //var existingRobot = _robotRepo.GetRobot(request.Id);
+                var existingRobot = await _context.RobotItems.FindAsync(Guid.Parse(request.Id));
                 // If there is no robot with given Id
                 if (existingRobot == null)
                 {
@@ -120,7 +133,8 @@ namespace RobotServer.Services
             {
                 List<RobotModel> robotModelList = new();
 
-                List<Robot> robotList = _robotRepo.GetRobots();
+                //List<Robot> robotList = _robotRepo.GetRobots();
+                List<Robot> robotList = await _context.RobotItems.ToListAsync();
                 // If there is data to return
                 if (robotList != null && robotList.Count != 0)
                 {
@@ -130,7 +144,7 @@ namespace RobotServer.Services
                         {
                             Id = robot.Id.ToString(),
                             Name = robot.Name,
-                            Description = robot.Description
+                            Description = robot.Description??""
                         };
                         robotModelList.Add(robotModel);
                     }
@@ -165,7 +179,8 @@ namespace RobotServer.Services
         {
             try
             {
-                var existingRobot = _robotRepo.GetRobot(request.Id);
+                //var existingRobot = _robotRepo.GetRobot(request.Id);
+                var existingRobot = await _context.RobotItems.FindAsync(Guid.Parse( request.Id));
                 if (existingRobot == null)
                 {
                     return await Task.FromResult(new Reply()
@@ -186,8 +201,9 @@ namespace RobotServer.Services
                 }
 
                 // Checking robot with same name is already existed in DB
-                var duplicateUserIndex = _robotRepo.GetRobotIndexByName(request.Id, request.Name);
-                if (duplicateUserIndex != -1)
+                //var duplicateUserIndex = _robotRepo.GetRobotIndexByName(request.Id, request.Name);
+                var duplicateUser = await _context.RobotItems.FirstOrDefaultAsync(item => item.Id != Guid.Parse(request.Id) && item.Name == request.Name);
+                if (duplicateUser != null)
                 {
                     return await Task.FromResult(new Reply
                     {
@@ -201,9 +217,10 @@ namespace RobotServer.Services
                 existingRobot.Description = request.Description;
 
                 // Updating the Data
-                var _index = _robotRepo.GetRobotIndexById(request.Id);
-                _robotRepo.UpdateRobot(existingRobot);
-       
+                //var _index = _robotRepo.GetRobotIndexById(request.Id);
+                //_robotRepo.UpdateRobot(existingRobot);
+                _context.Entry(existingRobot).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
 
                 return await Task.FromResult(new Reply
                 {
@@ -227,8 +244,9 @@ namespace RobotServer.Services
         {
             try
             {
-                var existingRobotIndex = _robotRepo.GetRobotIndexById(request.Id);
-                if (existingRobotIndex == -1)
+                //var existingRobotIndex = _robotRepo.GetRobotIndexById(request.Id);
+                var existingRobot = await _context.RobotItems.FindAsync(Guid.Parse( request.Id));
+                if (existingRobot == null)
                 {
                     return await Task.FromResult(new Reply()
                     {
@@ -236,7 +254,9 @@ namespace RobotServer.Services
                         IsOk = false
                     });
                 }
-                _robotRepo.DeleteRobot(existingRobotIndex);
+                //_robotRepo.DeleteRobot(existingRobotIndex);
+                _context.RobotItems.Remove(existingRobot);
+                await _context.SaveChangesAsync();
 
                 return await Task.FromResult(new Reply
                 {
