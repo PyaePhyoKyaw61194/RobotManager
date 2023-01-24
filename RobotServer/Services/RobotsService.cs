@@ -1,15 +1,19 @@
 ﻿using Grpc.Core;
 using RobotServer.Entities;
+using RobotServer.Repo;
 
 namespace RobotServer.Services
 {
     public class RobotsService : Robots.RobotsBase
     {
-        /// <summary>
-        /// List for storing Robot Data
-        /// </summary>
-        static List<Robot> robotList = new();
-  
+
+        private IRobotRepo _robotRepo;
+
+        public RobotsService(IRobotRepo robotRepo)
+        {
+            _robotRepo = robotRepo;
+        }
+
         #region Robot Creation
         public override async Task<Reply> CreateRobot(RobotCreateRequest request, ServerCallContext context)
         {
@@ -26,7 +30,7 @@ namespace RobotServer.Services
                 }
 
                 // Robot with same name is not allowed to create 
-                var duplicateUserIndex = robotList.FindIndex(robot => robot.Name == request.Name);
+                var duplicateUserIndex = _robotRepo.GetRobotIndexByName(request.Name);
 
                 // If duplicate data exists, terminate
                 if (duplicateUserIndex != -1)
@@ -45,16 +49,13 @@ namespace RobotServer.Services
                     Description = request.Description
                 };
 
-                // Avoiding null Error
-                robotList ??= new List<Robot>();
-
                 // Adding to the DB: currently not a persistence DB
-                robotList.Add(_robot);
+                _robotRepo.CreateRobot(_robot);
 
                 // Return the successful response
                 return await Task.FromResult(new Reply
                 {
-                    Result = $"Welcome {request.Name}. You're one of our Robots now!! {robotList.Count}",
+                    Result = $"Welcome {request.Name}. You're one of our Robots now!!",
                     IsOk = true
                 });
             }
@@ -78,8 +79,8 @@ namespace RobotServer.Services
 
             try
             {
-                var existingRobot = robotList.Find(robot => robot.Id == Guid.Parse(request.Id));
-                
+                var existingRobot = _robotRepo.GetRobot(request.Id);
+
                 // If there is no robot with given Id
                 if (existingRobot == null)
                 {
@@ -119,6 +120,7 @@ namespace RobotServer.Services
             {
                 List<RobotModel> robotModelList = new();
 
+                List<Robot> robotList = _robotRepo.GetRobots();
                 // If there is data to return
                 if (robotList != null && robotList.Count != 0)
                 {
@@ -163,7 +165,7 @@ namespace RobotServer.Services
         {
             try
             {
-                var existingRobot = robotList.Find(robot => robot.Id == Guid.Parse(request.Id));
+                var existingRobot = _robotRepo.GetRobot(request.Id);
                 if (existingRobot == null)
                 {
                     return await Task.FromResult(new Reply()
@@ -184,7 +186,7 @@ namespace RobotServer.Services
                 }
 
                 // Checking robot with same name is already existed in DB
-                var duplicateUserIndex = robotList.FindIndex(robot => robot.Name == request.Name && robot.Id != Guid.Parse(request.Id));
+                var duplicateUserIndex = _robotRepo.GetRobotIndexByName(request.Id, request.Name);
                 if (duplicateUserIndex != -1)
                 {
                     return await Task.FromResult(new Reply
@@ -199,8 +201,9 @@ namespace RobotServer.Services
                 existingRobot.Description = request.Description;
 
                 // Updating the Data
-                var _index = robotList.FindIndex(robot => robot.Id == Guid.Parse(request.Id));
-                robotList[_index] = existingRobot;
+                var _index = _robotRepo.GetRobotIndexById(request.Id);
+                _robotRepo.UpdateRobot(existingRobot);
+       
 
                 return await Task.FromResult(new Reply
                 {
@@ -224,7 +227,7 @@ namespace RobotServer.Services
         {
             try
             {
-                var existingRobotIndex = robotList.FindIndex(robot => robot.Id == Guid.Parse(request.Id));
+                var existingRobotIndex = _robotRepo.GetRobotIndexById(request.Id);
                 if (existingRobotIndex == -1)
                 {
                     return await Task.FromResult(new Reply()
@@ -233,7 +236,7 @@ namespace RobotServer.Services
                         IsOk = false
                     });
                 }
-                robotList.RemoveAt(existingRobotIndex);
+                _robotRepo.DeleteRobot(existingRobotIndex);
 
                 return await Task.FromResult(new Reply
                 {
@@ -249,6 +252,17 @@ namespace RobotServer.Services
                     IsOk = false
                 });
             }
+        }
+        #endregion
+
+        #region Testing Connection
+        public override async Task<Reply> TestConnection(Empty request, ServerCallContext context)
+        {
+            return await Task.FromResult(new Reply
+            {
+                Result = $"Connection is Ok",
+                IsOk = true
+            });
         }
         #endregion
     }
