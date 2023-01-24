@@ -227,12 +227,12 @@ namespace RobotsTest
         }
 
         [Fact]
-        public async void DeleteRobotWithInvaliIdTest()
+        public async void DeleteRobotWithInvalidIdTest()
         {
             //arrange
             DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
-            long id = 3;
+          
 
             //act
             RobotLookUpRequest req = new RobotLookUpRequest()
@@ -243,6 +243,75 @@ namespace RobotsTest
             var result = await robotsService.DeleteRobot(req, TestServerCallContext.Create());
 
             //assert
+            Assert.False(result.IsOk);
+        }
+
+        [Fact]
+        public async void CreateRobotTest()
+        {
+            //arrange
+            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            RobotsService robotsService = RobotsServiceInit(dbContextMock);
+
+            Robot toBeAdded = new Robot() { Name = "Robot 4", Description = "This is Robot 4" };
+
+            //act
+            RobotCreateRequest req = new RobotCreateRequest()
+            { 
+                Name = toBeAdded.Name,
+                Description = toBeAdded.Description
+            };
+            var result = await robotsService.CreateRobot(req,TestServerCallContext.Create());
+           
+
+            //assert
+            Assert.Equal(toBeAdded.Name, dbContextMock.Object.RobotItems.First(item=> item.Name == toBeAdded.Name).Name);
+            Assert.True(result.IsOk);
+        }
+
+        [Fact]
+        public async void CreateRobotWithEmptyNameTest()
+        {
+            //arrange
+            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            RobotsService robotsService = RobotsServiceInit(dbContextMock);
+
+            Robot toBeAdded = new Robot() { Name = "", Description = "This is Robot 4" };
+
+            //act
+            RobotCreateRequest req = new RobotCreateRequest()
+            {
+                Name = toBeAdded.Name,
+                Description = toBeAdded.Description
+            };
+            var result = await robotsService.CreateRobot(req, TestServerCallContext.Create());
+
+
+            //assert
+            Assert.Equal("Name should be filled", result.Result);
+            Assert.False(result.IsOk);
+        }
+
+        [Fact]
+        public async void CreateRobotWithDuplicateNameTest()
+        {
+            //arrange
+            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            RobotsService robotsService = RobotsServiceInit(dbContextMock);
+
+            Robot toBeAdded = new Robot() { Name = "Robot 1", Description = "This is Robot 4" };
+
+            //act
+            RobotCreateRequest req = new RobotCreateRequest()
+            {
+                Name = toBeAdded.Name,
+                Description = toBeAdded.Description
+            };
+            var result = await robotsService.CreateRobot(req, TestServerCallContext.Create());
+
+
+            //assert
+            Assert.Equal("Duplicate Robot existed", result.Result);
             Assert.False(result.IsOk);
         }
     }
