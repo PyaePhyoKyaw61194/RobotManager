@@ -13,7 +13,7 @@ namespace RobotsTest
             return new RobotsService(dbContextMock.Object);
         }
 
-        private List<Robot> getInitialDbEntities()
+        private List<Robot> GetInitialDbEntities()
         {
             return new List<Robot>
              {
@@ -23,7 +23,7 @@ namespace RobotsTest
             };
         }
 
-        public DbContextMock<RobotContext> getDbContext(List<Robot> initialEntities)
+        public DbContextMock<RobotContext> GetDbContext(List<Robot> initialEntities)
         {
             var opt = new DbContextOptionsBuilder<RobotContext>();
             //opt.UseInMemoryDatabase("RobotTestList");
@@ -36,7 +36,7 @@ namespace RobotsTest
         public async void GetAllRobotsTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
             //act
@@ -51,7 +51,7 @@ namespace RobotsTest
         public async void GetRobotByIdTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
 
@@ -68,7 +68,7 @@ namespace RobotsTest
         public async void GetRobotsWithInvalidId()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
             //act
@@ -86,7 +86,7 @@ namespace RobotsTest
         public async void GetRobotsWithBrokenId()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
             //act
@@ -105,10 +105,10 @@ namespace RobotsTest
         public async void UpdateRobotTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
-            Robot tobeUpdated = getInitialDbEntities()[2];
+            Robot tobeUpdated = GetInitialDbEntities()[2];
             tobeUpdated.Name = "new name";
 
 
@@ -131,10 +131,10 @@ namespace RobotsTest
         public async Task UpdateRobotWithInvalidIdTestAsync()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
-            Robot tobeUpdated = getInitialDbEntities()[2];
+            Robot tobeUpdated = GetInitialDbEntities()[2];
 
             //act
             RobotUpdateRequest req = new RobotUpdateRequest()
@@ -157,10 +157,10 @@ namespace RobotsTest
         public async Task UpdateRobotWithEmptyNameTestAsync()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
-            Robot tobeUpdated = getInitialDbEntities()[2];
+            Robot tobeUpdated = GetInitialDbEntities()[2];
 
             //act
             RobotUpdateRequest req = new RobotUpdateRequest()
@@ -182,10 +182,10 @@ namespace RobotsTest
         public async Task UpdateRobotWithDuplicateNameTestAsync()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
-            Robot tobeUpdated = getInitialDbEntities()[2];
+            Robot tobeUpdated = GetInitialDbEntities()[2];
 
             //act
             RobotUpdateRequest req = new RobotUpdateRequest()
@@ -208,7 +208,7 @@ namespace RobotsTest
         public async void DeleteRobotTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
             long id = 3;
 
@@ -228,7 +228,7 @@ namespace RobotsTest
         public async void DeleteRobotWithInvalidIdTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
 
@@ -248,7 +248,7 @@ namespace RobotsTest
         public async void CreateRobotTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
             Robot toBeAdded = new Robot() { Name = "Robot 4", Description = "This is Robot 4" };
@@ -271,7 +271,7 @@ namespace RobotsTest
         public async void CreateRobotWithEmptyNameTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
             Robot toBeAdded = new Robot() { Name = "", Description = "This is Robot 4" };
@@ -294,7 +294,7 @@ namespace RobotsTest
         public async void CreateRobotWithDuplicateNameTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = getDbContext(getInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
             Robot toBeAdded = new Robot() { Name = "Robot 1", Description = "This is Robot 4" };
