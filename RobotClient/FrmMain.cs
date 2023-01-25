@@ -32,7 +32,10 @@ namespace RobotClient
 
         private void BtnCreate_Click(object sender, EventArgs e)
         {
+            FrmAddRobot frm = new(GetRobotsClient());
+            frm.ShowDialog();
 
+            UpdateRobotGridView();
         }
 
         private async void TestSeverConnection()
