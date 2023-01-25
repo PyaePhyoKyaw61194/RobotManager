@@ -126,7 +126,7 @@
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
-            ClientSize = new Size(800, 475);
+            ClientSize = new Size(800, 506);
             Controls.Add(DgvRobot);
             Controls.Add(BtnCreate);
             Controls.Add(LblAlert);

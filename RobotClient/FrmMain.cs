@@ -51,7 +51,7 @@ namespace RobotClient
                 string? id = DgvRobot[3, RowIndex].Value.ToString();
                 if (id != null)
                 {
-                    FrmUpdateRobot frm = new(id, GetRobotsClient());
+                    FrmUpdateRobot frm = new(id, GetRobotsClient()); 
                     frm.ShowDialog();
 
                     UpdateRobotGridView();
@@ -89,7 +89,7 @@ namespace RobotClient
         {
             try
             {
-                var empty = new RobotServer.Empty();
+                var empty = new Empty();
                 var response = await GetRobotsClient().TestConnectionAsync(empty);
 
                 if (response == null)
@@ -127,6 +127,7 @@ namespace RobotClient
 
         public async void UpdateRobotGridView()
         {
+            LblAlert.Visible = false;
             int iCnt = DgvRobot.Rows.Count;
             for (int i = 0; i < iCnt; i++)
             {
@@ -134,7 +135,7 @@ namespace RobotClient
             }
             try
             {
-                var empty = new RobotServer.Empty();
+                var empty = new Empty();
                 var robots = await GetRobotsClient().GetRobotListAsync(empty);
                 if (robots != null)
                 {
@@ -212,6 +213,6 @@ namespace RobotClient
 
         }
 
-      
+
     }
 }

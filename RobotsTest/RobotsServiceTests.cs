@@ -8,12 +8,12 @@ namespace RobotsTest
 {
     public class RobotsServiceTests
     {
-        private RobotsService RobotsServiceInit(DbContextMock<RobotContext> dbContextMock)
+        private static RobotsService RobotsServiceInit(DbContextMock<RobotContext> dbContextMock)
         {
             return new RobotsService(dbContextMock.Object);
         }
 
-        private List<Robot> GetInitialDbEntities()
+        private static List<Robot> GetMockDbEntities()
         {
             return new List<Robot>
              {
@@ -23,11 +23,11 @@ namespace RobotsTest
             };
         }
 
-        public DbContextMock<RobotContext> GetDbContext(List<Robot> initialEntities)
+        public static DbContextMock<RobotContext> GetDbContext(List<Robot> initialEntities)
         {
             var opt = new DbContextOptionsBuilder<RobotContext>();
             //opt.UseInMemoryDatabase("RobotTestList");
-            DbContextMock<RobotContext> dbContextMock = new DbContextMock<RobotContext>(opt.Options);
+            DbContextMock<RobotContext> dbContextMock = new(opt.Options);
 
             dbContextMock.CreateDbSetMock(x => x.RobotItems, initialEntities);
             return dbContextMock;
@@ -36,11 +36,11 @@ namespace RobotsTest
         public async void GetAllRobotsTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
             //act
-            Empty emp = new Empty();
+            Empty emp = new();
             var result = await robotsService.GetRobotList(emp, TestServerCallContext.Create());
 
             //assert
@@ -51,12 +51,12 @@ namespace RobotsTest
         public async void GetRobotByIdTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
 
             //act
-            RobotLookUpRequest req = new RobotLookUpRequest() { Id = "e194976b-451a-4878-90f6-47071a5ef05f" };
+            RobotLookUpRequest req = new () { Id = "e194976b-451a-4878-90f6-47071a5ef05f" };
             var result = await robotsService.GetRobotById(req, TestServerCallContext.Create());
 
             //assert
@@ -68,12 +68,12 @@ namespace RobotsTest
         public async void GetRobotsWithInvalidId()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
             //act
             // invalid id
-            RobotLookUpRequest req = new RobotLookUpRequest() { Id = "104071a8-eea5-4faf-abd9-373c51ec5dd3" };
+            RobotLookUpRequest req = new () { Id = "104071a8-eea5-4faf-abd9-373c51ec5dd3" };
             var result = await robotsService.GetRobotById(req, TestServerCallContext.Create());
 
 
@@ -86,12 +86,12 @@ namespace RobotsTest
         public async void GetRobotsWithBrokenId()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
             //act
             // invalid id
-            RobotLookUpRequest req = new RobotLookUpRequest() { Id = "xxxxx" };
+            RobotLookUpRequest req = new() { Id = "xxxxx" };
             var result = await robotsService.GetRobotById(req, TestServerCallContext.Create());
 
 
@@ -105,24 +105,25 @@ namespace RobotsTest
         public async void UpdateRobotTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
-            Robot tobeUpdated = GetInitialDbEntities()[2];
+            Robot tobeUpdated = GetMockDbEntities()[2];
             tobeUpdated.Name = "new name";
 
 
             //act
-            RobotUpdateRequest req = new RobotUpdateRequest()
+            RobotUpdateRequest req = new ()
             {
                 Id = tobeUpdated.Id.ToString(),
                 Name = tobeUpdated.Name,
                 Description = tobeUpdated.Description
             };
-            var result = await robotsService.UpdateRobot(req, TestServerCallContext.Create());
+            await robotsService.UpdateRobot(req, TestServerCallContext.Create());
             Robot? updatedItem = dbContextMock.Object.RobotItems.Find(tobeUpdated.Id);
 
             //assert
+            Assert.NotNull(updatedItem?.Name);
             Assert.Equal(tobeUpdated.Name, updatedItem.Name);
             Assert.Equal(tobeUpdated.Description, updatedItem.Description);
         }
@@ -131,13 +132,13 @@ namespace RobotsTest
         public async Task UpdateRobotWithInvalidIdTestAsync()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
-            Robot tobeUpdated = GetInitialDbEntities()[2];
+            Robot tobeUpdated = GetMockDbEntities()[2];
 
             //act
-            RobotUpdateRequest req = new RobotUpdateRequest()
+            RobotUpdateRequest req = new ()
             {
                 // invalid id
                 Id = "29d2a981-ca26-4ad5-868f-52a8c9894c41",
@@ -157,13 +158,13 @@ namespace RobotsTest
         public async Task UpdateRobotWithEmptyNameTestAsync()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
-            Robot tobeUpdated = GetInitialDbEntities()[2];
+            Robot tobeUpdated = GetMockDbEntities()[2];
 
             //act
-            RobotUpdateRequest req = new RobotUpdateRequest()
+            RobotUpdateRequest req = new ()
             {
                 Id = tobeUpdated.Id.ToString(),
                 Name = "",
@@ -182,13 +183,13 @@ namespace RobotsTest
         public async Task UpdateRobotWithDuplicateNameTestAsync()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
-            Robot tobeUpdated = GetInitialDbEntities()[2];
+            Robot tobeUpdated = GetMockDbEntities()[2];
 
             //act
-            RobotUpdateRequest req = new RobotUpdateRequest()
+            RobotUpdateRequest req = new ()
             {
                 Id = tobeUpdated.Id.ToString(),
                 Name = "Robot 1",
@@ -208,12 +209,12 @@ namespace RobotsTest
         public async void DeleteRobotTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
             long id = 3;
 
             //act
-            RobotLookUpRequest req = new RobotLookUpRequest()
+            RobotLookUpRequest req = new ()
             {
                 Id = "e194976b-451a-4878-90f6-47071a5ef05f"
             };
@@ -228,12 +229,12 @@ namespace RobotsTest
         public async void DeleteRobotWithInvalidIdTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
 
             //act
-            RobotLookUpRequest req = new RobotLookUpRequest()
+            RobotLookUpRequest req = new ()
             {
                 // invalid id
                 Id = "e194976b-451a-4878-90f6-47071a5ef12f"
@@ -248,13 +249,13 @@ namespace RobotsTest
         public async void CreateRobotTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
-            Robot toBeAdded = new Robot() { Name = "Robot 4", Description = "This is Robot 4" };
+            Robot toBeAdded = new () { Name = "Robot 4", Description = "This is Robot 4" };
 
             //act
-            RobotCreateRequest req = new RobotCreateRequest()
+            RobotCreateRequest req = new ()
             {
                 Name = toBeAdded.Name,
                 Description = toBeAdded.Description
@@ -271,13 +272,13 @@ namespace RobotsTest
         public async void CreateRobotWithEmptyNameTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
-            Robot toBeAdded = new Robot() { Name = "", Description = "This is Robot 4" };
+            Robot toBeAdded = new () { Name = "", Description = "This is Robot 4" };
 
             //act
-            RobotCreateRequest req = new RobotCreateRequest()
+            RobotCreateRequest req = new ()
             {
                 Name = toBeAdded.Name,
                 Description = toBeAdded.Description
@@ -294,13 +295,13 @@ namespace RobotsTest
         public async void CreateRobotWithDuplicateNameTest()
         {
             //arrange
-            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetInitialDbEntities());
+            DbContextMock<RobotContext> dbContextMock = GetDbContext(GetMockDbEntities());
             RobotsService robotsService = RobotsServiceInit(dbContextMock);
 
-            Robot toBeAdded = new Robot() { Name = "Robot 1", Description = "This is Robot 4" };
+            Robot toBeAdded = new () { Name = "Robot 1", Description = "This is Robot 4" };
 
             //act
-            RobotCreateRequest req = new RobotCreateRequest()
+            RobotCreateRequest req = new ()
             {
                 Name = toBeAdded.Name,
                 Description = toBeAdded.Description
