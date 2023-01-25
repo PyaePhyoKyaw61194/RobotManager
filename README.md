@@ -38,6 +38,7 @@
  - validation are checked and alert will show if error occured
  - user can change connection string to server via connection button
  - gridview will show all robots saved in server
+ - You may need to install dotnet 6.0 runtime (https://dotnet.microsoft.com/en-us/download/dotnet/6.0)
  
  
 
