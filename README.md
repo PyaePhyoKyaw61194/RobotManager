@@ -36,7 +36,7 @@
  - Written in C# window Form template
  - User can perform all CRUD operations related to the server
  - validation are checked and alert will show if error occured
- - user can change connection string connecting to server with connection button
+ - user can change connection string to server via connection button
  - gridview will show all robots saved in server
  
  
