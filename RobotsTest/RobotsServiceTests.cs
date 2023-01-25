@@ -26,7 +26,6 @@ namespace RobotsTest
         public static DbContextMock<RobotContext> GetDbContext(List<Robot> initialEntities)
         {
             var opt = new DbContextOptionsBuilder<RobotContext>();
-            //opt.UseInMemoryDatabase("RobotTestList");
             DbContextMock<RobotContext> dbContextMock = new(opt.Options);
 
             dbContextMock.CreateDbSetMock(x => x.RobotItems, initialEntities);
@@ -99,7 +98,6 @@ namespace RobotsTest
             Assert.NotEmpty(result.Error.Result);
             Assert.False(result.Error.IsOk);
         }
-
 
         [Fact]
         public async void UpdateRobotTest()
