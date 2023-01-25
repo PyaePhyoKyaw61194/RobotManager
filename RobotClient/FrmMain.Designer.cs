@@ -28,30 +28,30 @@
         /// </summary>
         private void InitializeComponent()
         {
-            robotGridView = new DataGridView();
+            DgvRobot = new DataGridView();
             No = new DataGridViewTextBoxColumn();
             name = new DataGridViewTextBoxColumn();
             Description = new DataGridViewTextBoxColumn();
             Id = new DataGridViewTextBoxColumn();
-            btnCreate = new Button();
-            lblAlert = new Label();
-            btnUrl = new Button();
-            ((System.ComponentModel.ISupportInitialize)robotGridView).BeginInit();
+            BtnCreate = new Button();
+            LblAlert = new Label();
+            BtnUrl = new Button();
+            ((System.ComponentModel.ISupportInitialize)DgvRobot).BeginInit();
             SuspendLayout();
             // 
-            // robotGridView
+            // DgvRobot
             // 
-            robotGridView.AllowUserToAddRows = false;
-            robotGridView.AllowUserToDeleteRows = false;
-            robotGridView.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
-            robotGridView.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            robotGridView.Columns.AddRange(new DataGridViewColumn[] { No, name, Description, Id });
-            robotGridView.Location = new Point(12, 82);
-            robotGridView.Name = "robotGridView";
-            robotGridView.ReadOnly = true;
-            robotGridView.RowTemplate.Height = 25;
-            robotGridView.Size = new Size(758, 356);
-            robotGridView.TabIndex = 5;
+            DgvRobot.AllowUserToAddRows = false;
+            DgvRobot.AllowUserToDeleteRows = false;
+            DgvRobot.Anchor = AnchorStyles.Top | AnchorStyles.Left | AnchorStyles.Right;
+            DgvRobot.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            DgvRobot.Columns.AddRange(new DataGridViewColumn[] { No, name, Description, Id });
+            DgvRobot.Location = new Point(12, 82);
+            DgvRobot.Name = "DgvRobot";
+            DgvRobot.ReadOnly = true;
+            DgvRobot.RowTemplate.Height = 25;
+            DgvRobot.Size = new Size(758, 356);
+            DgvRobot.TabIndex = 5;
             // 
             // No
             // 
@@ -86,63 +86,67 @@
             Id.Visible = false;
             Id.Width = 50;
             // 
-            // btnCreate
+            // BtnCreate
             // 
-            btnCreate.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            btnCreate.Location = new Point(638, 12);
-            btnCreate.Name = "btnCreate";
-            btnCreate.Size = new Size(132, 46);
-            btnCreate.TabIndex = 4;
-            btnCreate.Text = "Add Robot";
-            btnCreate.UseVisualStyleBackColor = true;
+            BtnCreate.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnCreate.Location = new Point(638, 12);
+            BtnCreate.Name = "BtnCreate";
+            BtnCreate.Size = new Size(132, 46);
+            BtnCreate.TabIndex = 4;
+            BtnCreate.Text = "Add Robot";
+            BtnCreate.UseVisualStyleBackColor = true;
+            BtnCreate.Click += BtnCreate_Click;
             // 
-            // lblAlert
+            // LblAlert
             // 
-            lblAlert.AutoSize = true;
-            lblAlert.BackColor = Color.Red;
-            lblAlert.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            lblAlert.Location = new Point(15, 447);
-            lblAlert.Name = "lblAlert";
-            lblAlert.Size = new Size(52, 21);
-            lblAlert.TabIndex = 7;
-            lblAlert.Text = "label1";
-            lblAlert.Visible = false;
+            LblAlert.AutoSize = true;
+            LblAlert.BackColor = Color.Red;
+            LblAlert.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            LblAlert.Location = new Point(15, 447);
+            LblAlert.Name = "LblAlert";
+            LblAlert.Size = new Size(52, 21);
+            LblAlert.TabIndex = 7;
+            LblAlert.Text = "label1";
+            LblAlert.Visible = false;
             // 
-            // btnUrl
+            // BtnUrl
             // 
-            btnUrl.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
-            btnUrl.Location = new Point(12, 12);
-            btnUrl.Name = "btnUrl";
-            btnUrl.Size = new Size(132, 46);
-            btnUrl.TabIndex = 6;
-            btnUrl.Text = "Connection";
-            btnUrl.UseVisualStyleBackColor = true;
+            BtnUrl.Font = new Font("Segoe UI", 12F, FontStyle.Regular, GraphicsUnit.Point);
+            BtnUrl.Location = new Point(12, 12);
+            BtnUrl.Name = "BtnUrl";
+            BtnUrl.Size = new Size(132, 46);
+            BtnUrl.TabIndex = 6;
+            BtnUrl.Text = "Connection";
+            BtnUrl.UseVisualStyleBackColor = true;
+            BtnUrl.Click += BtnUrl_Click;
             // 
             // FrmMain
             // 
             AutoScaleDimensions = new SizeF(7F, 15F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(800, 475);
-            Controls.Add(robotGridView);
-            Controls.Add(btnCreate);
-            Controls.Add(lblAlert);
-            Controls.Add(btnUrl);
+            Controls.Add(DgvRobot);
+            Controls.Add(BtnCreate);
+            Controls.Add(LblAlert);
+            Controls.Add(BtnUrl);
             Name = "FrmMain";
-            Text = "Form1";
-            ((System.ComponentModel.ISupportInitialize)robotGridView).EndInit();
+            StartPosition = FormStartPosition.CenterScreen;
+            Text = "Robot Manager";
+            Load += FrmMain_Load;
+            ((System.ComponentModel.ISupportInitialize)DgvRobot).EndInit();
             ResumeLayout(false);
             PerformLayout();
         }
 
         #endregion
 
-        private DataGridView robotGridView;
+        private DataGridView DgvRobot;
         private DataGridViewTextBoxColumn No;
         private DataGridViewTextBoxColumn name;
         private DataGridViewTextBoxColumn Description;
         private DataGridViewTextBoxColumn Id;
-        private Button btnCreate;
-        private Label lblAlert;
-        private Button btnUrl;
+        private Button BtnCreate;
+        private Label LblAlert;
+        private Button BtnUrl;
     }
 }

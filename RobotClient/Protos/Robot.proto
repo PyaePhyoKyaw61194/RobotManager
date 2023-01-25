@@ -1,0 +1,50 @@
+syntax = "proto3";
+
+option csharp_namespace = "RobotServer";
+
+service Robots{
+	rpc TestConnection (Empty) returns (Reply);
+	
+	rpc CreateRobot (RobotCreateRequest) returns (Reply);
+	rpc UpdateRobot (RobotUpdateRequest) returns (Reply);
+	rpc DeleteRobot (RobotLookUpRequest) returns (Reply);
+
+	rpc GetRobotById (RobotLookUpRequest) returns (RobotModel);
+	rpc GetRobotList (Empty) returns (RobotList);
+}
+
+message Empty{
+	
+}
+
+message Reply{
+	string result =1;
+	bool isOk=2;
+}
+
+message RobotLookUpRequest{
+	string id = 1;
+}
+
+message RobotCreateRequest{
+	string name = 1;
+	string description = 2;
+}
+
+message RobotUpdateRequest{
+	string id = 1;
+	string name = 2;
+	string description = 3;
+}
+
+message RobotModel{
+	string id = 1;
+	string name = 2;
+	string description = 3;
+	Reply error=4;
+}
+
+message RobotList{
+	repeated RobotModel items=1;
+	Reply error =2;
+}
