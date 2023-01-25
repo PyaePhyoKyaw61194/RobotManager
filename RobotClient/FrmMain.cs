@@ -38,6 +38,40 @@ namespace RobotClient
             UpdateRobotGridView();
         }
 
+        private void DgvRobot_CellClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex < 0 || e.ColumnIndex < 0)
+            {
+                return;
+            }
+            // Edit
+            if (e.ColumnIndex == 4)
+            {
+              
+
+            }
+            // Delete
+            else if (e.ColumnIndex == 5)
+            {
+                DialogResult result = MessageBox.Show("Are you sure to Delete?", "Warning",
+                                                        MessageBoxButtons.OKCancel, MessageBoxIcon.Exclamation);
+                if (result == DialogResult.Cancel)
+                {
+                    return;
+                }
+                else
+                {
+                    int RowIndex = e.RowIndex;
+                    string? id = DgvRobot[3, RowIndex].Value.ToString();
+                    if (id != null)
+                    {
+                        DeleteRobotById(id);
+                    }
+
+                }
+            }
+        }
+
         private async void TestSeverConnection()
         {
             try
@@ -139,5 +173,32 @@ namespace RobotClient
 
         }
 
+        private async void DeleteRobotById(string id)
+        {
+            try
+            {
+                var input = new RobotLookUpRequest { Id = id };
+
+                var response = await GetRobotsClient().DeleteRobotAsync(input);
+
+                if (response.IsOk == true)
+                {
+                    UpdateRobotGridView();
+                }
+                else
+                {
+                    LblAlert.Text = response.Result;
+                    LblAlert.Visible = true;
+                }
+            }
+            catch (Exception ex)
+            {
+                LblAlert.Text = ex.Message;
+                LblAlert.Visible = true;
+            }
+
+        }
+
+     
     }
 }

@@ -52,6 +52,7 @@
             DgvRobot.RowTemplate.Height = 25;
             DgvRobot.Size = new Size(758, 356);
             DgvRobot.TabIndex = 5;
+            DgvRobot.CellClick += DgvRobot_CellClick;
             // 
             // No
             // 
