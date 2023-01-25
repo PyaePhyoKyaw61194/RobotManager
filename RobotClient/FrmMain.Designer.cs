@@ -109,6 +109,7 @@
             LblAlert.TabIndex = 7;
             LblAlert.Text = "label1";
             LblAlert.Visible = false;
+            LblAlert.Click += LblAlert_Click;
             // 
             // BtnUrl
             // 

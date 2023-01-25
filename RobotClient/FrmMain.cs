@@ -47,7 +47,15 @@ namespace RobotClient
             // Edit
             if (e.ColumnIndex == 4)
             {
-              
+                int RowIndex = e.RowIndex;
+                string? id = DgvRobot[3, RowIndex].Value.ToString();
+                if (id != null)
+                {
+                    FrmUpdateRobot frm = new(id, GetRobotsClient());
+                    frm.ShowDialog();
+
+                    UpdateRobotGridView();
+                }
 
             }
             // Delete
@@ -70,6 +78,11 @@ namespace RobotClient
 
                 }
             }
+        }
+
+        private void LblAlert_Click(object sender, EventArgs e)
+        {
+            LblAlert.Visible = false;
         }
 
         private async void TestSeverConnection()
@@ -199,6 +212,6 @@ namespace RobotClient
 
         }
 
-     
+      
     }
 }
