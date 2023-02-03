@@ -10,7 +10,7 @@ namespace RobotClient
         /// <summary>
         /// connection url to server
         /// </summary>
-        private static string connectionUrl = "http://20.222.40.75";
+        private static string connectionUrl = "http://localhost:5000";
 
         public FrmMain()
         {
